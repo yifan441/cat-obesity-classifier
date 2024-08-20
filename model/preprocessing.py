@@ -40,9 +40,11 @@ class ObeseCatDataset(Dataset):
         plt.show()
 
 transforms = v2.Compose([
-    v2.Resize(size=(300, 300)),
+    # v2.Resize(size=(300, 300)),
+    Lambda(lambda x: x[:3, :, :]),
+    v2.JPEG(100),
     v2.RandomResizedCrop(
-        size=(224, 224),
+        size=(256, 256),
         scale = (0.7, 1.0),
         ratio = (0.95, 1.05),
         antialias=True
@@ -58,6 +60,7 @@ def one_hot(y):
         dim=0, index=torch.tensor(y), value=1
     )
 
+target_transforms = Lambda(one_hot)
 
 def main() -> None:
     from helpers import plot

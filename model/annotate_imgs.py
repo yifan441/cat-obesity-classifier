@@ -16,6 +16,8 @@ def create_annotations_file(datadir: str, save_path: str) -> None:
         class_path = os.path.join(images_path, img_class)
         label = class_labels[img_class]
         for image in os.listdir(class_path):
+            if image == ".DS_Store":
+                continue
             image_path = os.path.join(class_path, image)
             annotations["image"].append(image_path)
             annotations["label"].append(label)
