@@ -41,9 +41,15 @@ class ObeseCatDataset(Dataset):
 
 transforms = v2.Compose([
     v2.Resize(size=(300, 300)),
-    v2.RandomResizedCrop(size=(224, 224), antialias=True),
+    v2.RandomResizedCrop(
+        size=(224, 224),
+        scale = (0.7, 1.0),
+        ratio = (0.95, 1.05),
+        antialias=True
+    ),
     v2.RandomHorizontalFlip(p=0.5),
-    v2.RandomRotation(degrees=45),
+    v2.RandomRotation(degrees=30),
+    # v2.RandomPerspective(distortion_scale=0.3, p=0.2),
     v2.ToDtype(torch.float32, scale=True),
 ])
 
