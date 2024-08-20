@@ -10,6 +10,14 @@ npm-debug.*
 *.orig.*
 web-build/
 
+# dataset folders
+model/dataset/skinny
+model/dataset/normal
+model/dataset/obese
+
+# python
+__pycache__/
+
 # macOS
 .DS_Store
 
