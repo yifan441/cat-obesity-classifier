@@ -6,7 +6,9 @@ import torch
 from torch.utils.data import Dataset
 from torchvision.io import read_image
 from torchvision.transforms import Lambda, v2
+from config import config
 
+INPUT_DIM = config.INPUT_DIM
 
 class ObeseCatDataset(Dataset):
     def __init__(
@@ -44,14 +46,14 @@ transforms = v2.Compose([
     Lambda(lambda x: x[:3, :, :]),
     v2.JPEG(100),
     v2.RandomResizedCrop(
-        size=(256, 256),
+        size=(INPUT_DIM, INPUT_DIM),
         scale = (0.7, 1.0),
         ratio = (0.95, 1.05),
         antialias=True
     ),
     v2.RandomHorizontalFlip(p=0.5),
     v2.RandomRotation(degrees=30),
-    # v2.RandomPerspective(distortion_scale=0.3, p=0.2),
+    v2.RandomPerspective(distortion_scale=0.3, p=0.2),
     v2.ToDtype(torch.float32, scale=True),
 ])
 

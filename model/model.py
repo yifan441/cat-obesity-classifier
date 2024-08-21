@@ -2,8 +2,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+
 class CatClassifier(nn.Module):
     '''
+    Requires input size to be 256x256
     Convolutional network to classify cat images as:
     - skinny
     - normal

@@ -5,17 +5,20 @@ from torch.utils.data import DataLoader, random_split
 # import wandb
 import os
 from model import CatClassifier
+from vggnet import VGGNet
 from preprocessing import ObeseCatDataset, transforms, target_transforms
+from config import config
 
-LOG = False
-SEED = 42
-BATCH_SIZE = 8
-EPOCHS = 10
-LEARNING_RATE = 1e-3
-LOG_INTERVAL = 100
-PRINT_INTERVAL = 5
+LOG = config.LOG
+SEED = config.SEED
+BATCH_SIZE = config.BATCH_SIZE
+EPOCHS = config.EPOCHS
+LEARNING_RATE = config.LEARNING_RATE
+LOG_INTERVAL = config.LOG_INTERVAL
+PRINT_INTERVAL = config.PRINT_INTERVAL
 
-model = CatClassifier()
+# model = CatClassifier()
+model = VGGNet()
 
 if LOG:
     pass
@@ -27,7 +30,7 @@ def count_parameters(model):
 
 data_path = 'dataset'
 annotations_path = os.path.join(data_path, 'annotations.csv')
-dataset = ObeseCatDataset(annotations_path, data_path, transforms, target_transforms)
+dataset = ObeseCatDataset(annotations_path, data_path, transforms) #, target_transforms)
 
 # Train-test Split
 train_set, eval_set = random_split(dataset, [0.9, 0.1], torch.Generator().manual_seed(SEED))
@@ -70,7 +73,8 @@ def eval(model, dataloader, loss_fn):
         losses.append(loss.item())
 
         preds = logits.argmax(axis=1)
-        labels = targets.argmax(axis=1)
+        labels = targets
+        # labels = targets.argmax(axis=1)
         correct = (preds == labels).sum().item()
         accuracy = correct / len(labels)
         accuracies.append(accuracy) 
@@ -100,7 +104,7 @@ def solver(model, train_loader, eval_loader, epochs = EPOCHS):
             # printing
             if step % PRINT_INTERVAL == 0:
                 print(
-                        f'Epoch: {epoch + 1}/{epochs},',
+                    f'Epoch: {epoch + 1}/{epochs},',
                     f'Step: {step + 1}/{len_train_loader},',
                     f'Validation loss: {eval_loss:.2f},',
                     f'Validation accuracy: {eval_acc:.2f}'
@@ -112,8 +116,10 @@ def main() -> None:
     train_losses, eval_losses = solver(
         model, train_loader, eval_loader
     )
-    plt.plot(eval_losses)
-    plt.plot(train_losses)
+    plt.plot(eval_losses, label='Validation')
+    plt.plot(train_losses, label='Training')
+    plt.title('Training Loss Plot')
+    plt.legend()
     plt.show()
 
 if __name__ == '__main__':
