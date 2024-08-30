@@ -6,6 +6,7 @@ from torch.utils.data import DataLoader, random_split
 import os
 from model import CatClassifier
 from vggnet import VGGNet
+from resnet_finetune import ResNet
 from preprocessing import ObeseCatDataset, transforms, target_transforms
 from config import config
 
@@ -16,9 +17,11 @@ EPOCHS = config.EPOCHS
 LEARNING_RATE = config.LEARNING_RATE
 LOG_INTERVAL = config.LOG_INTERVAL
 PRINT_INTERVAL = config.PRINT_INTERVAL
+MODEL_SAVE_PATH = config.MODEL_SAVE_PATH
 
 # model = CatClassifier()
-model = VGGNet()
+# model = VGGNet()
+model = ResNet
 
 if LOG:
     pass
@@ -86,6 +89,9 @@ def solver(model, train_loader, eval_loader, epochs = EPOCHS):
     model.to(device)
     loss_fn = nn.CrossEntropyLoss().to(device)
     optimizer = torch.optim.Adam(model.parameters(), LEARNING_RATE)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer, factor=0.95, patience=30
+    )
     
     len_train_loader = len(train_loader)
     train_loss_history = []
@@ -96,6 +102,7 @@ def solver(model, train_loader, eval_loader, epochs = EPOCHS):
             model, train_loader, loss_fn, optimizer
         ):
             eval_loss, eval_acc = eval(model, eval_loader, loss_fn)
+            scheduler.step(eval_loss)
             # logging
             if step % LOG_INTERVAL == 0:
                 eval_loss_history.append(eval_loss)
@@ -104,10 +111,11 @@ def solver(model, train_loader, eval_loader, epochs = EPOCHS):
             # printing
             if step % PRINT_INTERVAL == 0:
                 print(
-                    f'Epoch: {epoch + 1}/{epochs},',
-                    f'Step: {step + 1}/{len_train_loader},',
+                    f'Epoch: {epoch + 1:2d}/{epochs},',
+                    f'Step: {step + 1:2d}/{len_train_loader},',
                     f'Validation loss: {eval_loss:.2f},',
-                    f'Validation accuracy: {eval_acc:.2f}'
+                    f'Validation accuracy: {eval_acc:.2f}',
+                    f'LR: {1e4 * scheduler.get_last_lr()[0]:.2f}e-4'
                 )
     return train_loss_history, eval_loss_history
 
@@ -116,6 +124,7 @@ def main() -> None:
     train_losses, eval_losses = solver(
         model, train_loader, eval_loader
     )
+    torch.save(model.state_dict(), MODEL_SAVE_PATH)
     plt.plot(eval_losses, label='Validation')
     plt.plot(train_losses, label='Training')
     plt.title('Training Loss Plot')
