@@ -14,3 +14,5 @@ class config:
     LOG_INTERVAL = 10
     PRINT_INTERVAL = 10 
     MODEL_SAVE_PATH = 'saved_models/resnet18.pt'
+    KEY = {0: "skinny", 1: "normal", 2: "obese"}
+
