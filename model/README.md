@@ -1,6 +1,6 @@
 # Andy's super cool fat cat model
 
-![Surprised Pikachu Face](https://www.google.com/url?sa=i&url=https%3A%2F%2Fknowyourmeme.com%2Fmemes%2Fsurprised-pikachu&psig=AOvVaw1yFqywPRki5RYI173qbQ3y&ust=1725402948819000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCOjbzoippYgDFQAAAAAdAAAAABAI)
+![Surprised Pikachu Face](https://i.kym-cdn.com/entries/icons/original/000/027/475/Screen_Shot_2018-10-25_at_11.02.15_AM.png)
 
 This model classifies a user-given cat photo as either `skinny`, `normal`, or `obese`.
 
