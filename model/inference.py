@@ -8,7 +8,6 @@ model.cpu()
 
 KEY = config.KEY
 
-
 def main() -> None:
     print("Welcome to LoafTest!")
     img_path = input("Please enter the path to your cat image: ")
