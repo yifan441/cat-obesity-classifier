@@ -17,7 +17,7 @@ def create_annotations_file(
     for img_class in os.listdir(datadir):
         if img_class not in class_labels:
             continue
-        class_path = os.path.join(images_path, img_class)
+        class_path = os.path.join(datadir, img_class)
         label = class_labels[img_class]
         for image in os.listdir(class_path):
             if image == ".DS_Store":

@@ -53,8 +53,10 @@ transforms = v2.Compose([
     ),
     v2.RandomHorizontalFlip(p=0.5),
     v2.RandomRotation(degrees=30),
+    v2.ColorJitter(brightness=.5, contrast=.5, saturation=.2, hue=.2),
     v2.RandomPerspective(distortion_scale=0.3, p=0.2),
     v2.ToDtype(torch.float32, scale=True),
+    v2.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
 ])
 
 def one_hot(y):
@@ -66,47 +68,30 @@ target_transforms = Lambda(one_hot)
 
 def main() -> None:
     from helpers import plot
+
     dataset_path = "dataset"
     annotations_path = os.path.join(dataset_path, "annotations.csv")
+
     dataset = ObeseCatDataset(annotations_path, dataset_path)
+
     print(f"Length of dataset: {len(dataset)}")
     response = input("Would you like to see some cats? (y/n)")
+
     while response != "n":
         idx = torch.randint(len(dataset), size=(1,)).item()
+
         img, label = dataset[idx]
         row1 = [[img] + [transforms(img) for _ in range(3)]]
         rows2_4 = [[transforms(img) for _ in range(4)] for _ in range(3)]
+
         plot(row1 + rows2_4)
         plt.suptitle(f'ID: {idx}, Class: {dataset.key[label]}')
         plt.show()
+
         print("Would you like to see more cats? (y/n)")
         response = input()
+
     print('Goodbye.')
-
-    # print("Dataset with transforms:")
-    # transformed = ObeseCatDataset(
-    #     annotations_path,
-    #     dataset_path,
-    #     transforms,
-    #     Lambda(one_hot)
-    # )
-    # print(f"Check an idx [{0}-{len(transformed)}]:")
-    # idx = int(input())
-    # img, label = transformed[idx]
-    # transformed.visualize(idx)
-    # print(img.shape)
-    # print(label)
-    # from helpers import plot
-    # print("Check an idx:")
-    # idx = int(input())
-    # img, label = dataset[idx]
-    # # resize_cropper = v2.RandomResizedCrop(size=(224, 224))
-    # # resized_crops = [resize_cropper(img) for _ in range(4)]
-    # transformed = [transforms(img) for _ in range(4)]
-    # # plot([img] + resized_crops)
-    # plot([img] + transformed)
-    # plt.show()
-
 
 if __name__ == "__main__":
     main()
