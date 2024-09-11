@@ -40,4 +40,6 @@ benchmarks/graphs
 expo-env.d.ts
 # @end expo-cli
 
-%ProgramData%
+model/ObeseCats/
+
+frontend/%ProgramData%
