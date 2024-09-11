@@ -124,6 +124,7 @@ def main() -> None:
     train_losses, eval_losses = solver(
         model, train_loader, eval_loader
     )
+    model.to(torch.device('cpu'))
     torch.save(model.state_dict(), MODEL_SAVE_PATH)
     plt.plot(eval_losses, label='Validation')
     plt.plot(train_losses, label='Training')
